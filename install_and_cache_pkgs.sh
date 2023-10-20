@@ -29,7 +29,7 @@ fi
 
 log "Updating APT package list..."
 if [[ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mmin -5)" ]]; then
-  sudo apt-fast update > /dev/null
+  apt-fast update > /dev/null
   log "done"
 else
   log "skipped (fresh within at least 5 minutes)"
@@ -62,7 +62,7 @@ install_log_filepath="${cache_dir}/install.log"
 
 log "Clean installing ${package_count} packages..."
 # Zero interaction while installing or upgrading the system via apt.
-sudo DEBIAN_FRONTEND=noninteractive apt-fast --yes install ${packages} > "${install_log_filepath}"
+DEBIAN_FRONTEND=noninteractive apt-fast --yes install ${packages} > "${install_log_filepath}"
 log "done"
 log "Installation log written to ${install_log_filepath}"
 
@@ -93,7 +93,7 @@ for installed_package in ${installed_packages}; do
       & get_install_script_filepath "" "${package_name}" "postinst"; } |
       while IFS= read -r f; do test -f "${f}" -o -L "${f}" && get_tar_relpath "${f}"; done |
       xargs -I {} echo \'{}\' | # Single quotes ensure literals like backslash get captured.
-      sudo xargs tar -cf "${cache_filepath}" -C /
+      xargs tar -cf "${cache_filepath}" -C /
 
     log "    done (compressed size $(du -h "${cache_filepath}" | cut -f1))."
   fi
