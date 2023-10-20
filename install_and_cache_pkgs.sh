@@ -18,18 +18,19 @@ cache_dir="${1}"
 # List of the packages to use.
 input_packages="${@:3}"
 
-if ! apt-fast --version > /dev/null 2>&1; then
-  log "Installing apt-fast for optimized installs..."
-  # Install apt-fast for optimized installs.
-  /bin/bash -c "$(curl -sL https://git.io/vokNn)"
-  log "done"
-
-  log_empty_line
-fi
+#
+#if ! apt-fast --version > /dev/null 2>&1; then
+#  log "Installing apt-fast for optimized installs..."
+#  # Install apt-fast for optimized installs.
+#  /bin/bash -c "$(curl -sL https://git.io/vokNn)"
+#  log "done"
+#
+#  log_empty_line
+#fi
 
 log "Updating APT package list..."
 if [[ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mmin -5)" ]]; then
-  apt-fast update > /dev/null
+  apt update > /dev/null
   log "done"
 else
   log "skipped (fresh within at least 5 minutes)"
@@ -62,7 +63,7 @@ install_log_filepath="${cache_dir}/install.log"
 
 log "Clean installing ${package_count} packages..."
 # Zero interaction while installing or upgrading the system via apt.
-DEBIAN_FRONTEND=noninteractive apt-fast --yes install ${packages} > "${install_log_filepath}"
+DEBIAN_FRONTEND=noninteractive apt --yes install ${packages} > "${install_log_filepath}"
 log "done"
 log "Installation log written to ${install_log_filepath}"
 
